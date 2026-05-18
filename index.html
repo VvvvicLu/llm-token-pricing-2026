@@ -1,0 +1,1432 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>大模型 Token 价格与选型对比</title>
+  <style>
+    :root {
+      --bg: #090d11;
+      --panel: #101821;
+      --panel-2: #151f2a;
+      --panel-3: #0d141c;
+      --ink: #eef5ff;
+      --muted: #9caec5;
+      --line: #263443;
+      --line-strong: #34485c;
+      --blue: #7aa7ff;
+      --green: #42d6b0;
+      --amber: #f1b85b;
+      --red: #ff7c7c;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #090d11 0%, #0d1217 42%, #111419 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--line);
+      background: rgba(9, 13, 17, 0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .wrap {
+      width: min(1320px, calc(100vw - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(21, 31, 42, 0.82);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    main {
+      padding: 22px 0 48px;
+    }
+
+    .notice {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .note {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .note strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #121b25;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .model-list {
+      display: grid;
+      gap: 18px;
+      padding: 16px;
+    }
+
+    .vendor-group {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-3);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      overflow: hidden;
+      --vendor-accent: var(--blue);
+    }
+
+    .vendor-group::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: var(--vendor-accent);
+    }
+
+    .vendor-group:nth-child(10n + 1) { --vendor-accent: #7aa7ff; }
+    .vendor-group:nth-child(10n + 2) { --vendor-accent: #42d6b0; }
+    .vendor-group:nth-child(10n + 3) { --vendor-accent: #f1b85b; }
+    .vendor-group:nth-child(10n + 4) { --vendor-accent: #a58bff; }
+    .vendor-group:nth-child(10n + 5) { --vendor-accent: #4fd1e8; }
+    .vendor-group:nth-child(10n + 6) { --vendor-accent: #ff9f6e; }
+    .vendor-group:nth-child(10n + 7) { --vendor-accent: #74d680; }
+    .vendor-group:nth-child(10n + 8) { --vendor-accent: #ff7c9f; }
+    .vendor-group:nth-child(10n + 9) { --vendor-accent: #7fe0c4; }
+    .vendor-group:nth-child(10n + 10) { --vendor-accent: #d1b66f; }
+
+    .card {
+      --vendor-accent: var(--blue);
+    }
+
+    .card:nth-child(30n + 1),
+    .card:nth-child(30n + 2),
+    .card:nth-child(30n + 3) { --vendor-accent: #7aa7ff; }
+    .card:nth-child(30n + 4),
+    .card:nth-child(30n + 5),
+    .card:nth-child(30n + 6) { --vendor-accent: #42d6b0; }
+    .card:nth-child(30n + 7),
+    .card:nth-child(30n + 8),
+    .card:nth-child(30n + 9) { --vendor-accent: #f1b85b; }
+    .card:nth-child(30n + 10),
+    .card:nth-child(30n + 11),
+    .card:nth-child(30n + 12) { --vendor-accent: #a58bff; }
+    .card:nth-child(30n + 13),
+    .card:nth-child(30n + 14),
+    .card:nth-child(30n + 15) { --vendor-accent: #4fd1e8; }
+    .card:nth-child(30n + 16),
+    .card:nth-child(30n + 17),
+    .card:nth-child(30n + 18) { --vendor-accent: #ff9f6e; }
+    .card:nth-child(30n + 19),
+    .card:nth-child(30n + 20),
+    .card:nth-child(30n + 21) { --vendor-accent: #74d680; }
+    .card:nth-child(30n + 22),
+    .card:nth-child(30n + 23),
+    .card:nth-child(30n + 24) { --vendor-accent: #ff7c9f; }
+    .card:nth-child(30n + 25),
+    .card:nth-child(30n + 26),
+    .card:nth-child(30n + 27) { --vendor-accent: #7fe0c4; }
+    .card:nth-child(30n + 28),
+    .card:nth-child(30n + 29),
+    .card:nth-child(30n + 30) { --vendor-accent: #d1b66f; }
+
+    .vendor-group:nth-child(odd) {
+      background: #0f1720;
+    }
+
+    .vendor-group:nth-child(even) {
+      background: #101a21;
+    }
+
+    .vendor-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 4px 2px 2px;
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .vendor-title strong {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .vendor-title strong::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--vendor-accent);
+      box-shadow: 0 0 16px rgba(122, 167, 255, 0.18);
+    }
+
+    .vendor-title span {
+      max-width: 62%;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .model-row {
+      display: grid;
+      grid-template-columns: 170px 1.12fr 1fr;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #121c26;
+      border-left: 3px solid var(--vendor-accent);
+    }
+
+    .model-row:hover {
+      background: #162230;
+      border-color: var(--line-strong);
+    }
+
+    .prices {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .price-box {
+      min-height: 76px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0d151f;
+    }
+
+    .price-box .label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .price-box .value {
+      margin-top: 4px;
+      font-size: 13px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      word-break: break-word;
+    }
+
+    .desc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .desc-item {
+      min-height: 76px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0d151f;
+    }
+
+    .desc-item strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+
+    .desc-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .model {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      word-break: break-word;
+    }
+
+    .tier {
+      display: inline-flex;
+      margin-top: 8px;
+      padding: 3px 7px;
+      border-radius: 5px;
+      background: color-mix(in srgb, var(--vendor-accent) 18%, #111821);
+      color: var(--vendor-accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag {
+      display: inline-flex;
+      margin: 0 5px 5px 0;
+      padding: 3px 7px;
+      border-radius: 5px;
+      background: #182434;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tag.green { background: rgba(66, 214, 176, 0.12); color: var(--green); }
+    .tag.amber { background: rgba(241, 184, 91, 0.13); color: var(--amber); }
+    .tag.red { background: rgba(255, 124, 124, 0.13); color: var(--red); }
+    .tag.blue { background: rgba(122, 167, 255, 0.13); color: var(--blue); }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #121c26;
+      overflow: hidden;
+      border-top: 3px solid var(--vendor-accent);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--line);
+      background: #0f1720;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .region {
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: #182434;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .card-body {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .metric {
+      min-height: 76px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0d151f;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric .value {
+      margin-top: 4px;
+      font-size: 14px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      word-break: break-word;
+    }
+
+    .detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .detail-block {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0d151f;
+    }
+
+    .detail-block strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .detail-block p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .index-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .index-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #121c26;
+    }
+
+    .index-card h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .index-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .sources {
+      padding: 16px 18px 20px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sources a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .sources a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 980px) {
+      .wrap { width: min(100vw - 24px, 1320px); }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .notice { grid-template-columns: 1fr; }
+      .model-row { grid-template-columns: 1fr; }
+      .prices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .desc { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; padding: 12px; }
+      .mini-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .detail { grid-template-columns: 1fr; }
+      .index-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div>
+        <h1>大模型 Token 价格与选型对比</h1>
+        <div class="meta">
+          <span class="pill">核对日期：2026-05-18</span>
+          <span class="pill">单位：每 100 万 token</span>
+          <span class="pill">汇率：1 USD ≈ ¥6.8435</span>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="pill">输入</span>
+        <span class="pill">输出</span>
+        <span class="pill">缓存</span>
+        <span class="pill">Batch</span>
+        <span class="pill">适用场景</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="notice" aria-label="计价口径说明">
+      <div class="note">
+        <strong>价格不是单次对话价格</strong>
+        <p>表内价格默认是每 100 万 token 的单价。单次任务费用 = token 数 / 1,000,000 × 对应单价。</p>
+      </div>
+      <div class="note">
+        <strong>国产模型用国内人民币口径</strong>
+        <p>DeepSeek、Kimi、MiniMax、GLM、Qwen、MiMo、豆包等按国内可见价格整理。</p>
+      </div>
+      <div class="note">
+        <strong>海外模型加人民币约算</strong>
+        <p>Claude、Gemini、ChatGPT 保留美元价格，同时按当前汇率给出约人民币。</p>
+      </div>
+    </section>
+
+    <section class="section" aria-label="模型价格总表">
+      <div class="section-head">
+        <div>
+          <h2>价格总表</h2>
+          <p>每家按旗舰、主力、轻量/对照档排序；每一行列出输入、输出、缓存、Batch、核心功能和适用场景。</p>
+        </div>
+      </div>
+      <div class="model-list">
+        <div class="model-row">
+          <div><div class="brand">Claude</div><div class="model">Claude Opus 4.7</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">$5 / ¥34.22</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">$25 / ¥171.09</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">读 $0.50；写入另计</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">5 折</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>复杂推理、代码理解、清晰缓存规则、1M 上下文。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>关键代码、复杂分析；输出价高，缓存写入也要计费。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">Gemini</div><div class="model">Gemini 3.1 Pro Preview</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">$2 / ¥13.69</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">$12 / ¥82.12</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">$0.20 / ¥1.37</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">5 折</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>多模态、Google 生态、输入价相对低、搜索增强。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>多模态和资料研究；&gt;200K 后进入更高价档。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">ChatGPT</div><div class="model">GPT-5.5</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">$5 / ¥34.22</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">$30 / ¥205.31</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">$0.50 / ¥3.42</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">5 折</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>通用能力、工具生态、Agent、开发者文档。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>复杂 Agent 和产品集成；输出最贵，长上下文会加价。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">Qwen</div><div class="model">qwen3.6-max-preview</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">¥9</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">¥54</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">¥1.80</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">/</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>中文强、阿里云生态、缓存有折扣、国内计价。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>中文内容和国内业务；128K-256K 输入 ¥15、输出 ¥90。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">DeepSeek</div><div class="model">deepseek-v4-pro</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">¥3</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">¥6</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">¥0.025</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">/</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>性价比、缓存价极低、1M 上下文、中文 / 代码。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>高频低成本任务；折扣至 2026-05-31，需复核。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">Kimi</div><div class="model">kimi-k2.6</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">¥6.50</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">¥27</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">¥1.10</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">6折</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>长上下文、缓存优惠、Batch、中文友好。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>长文档和批量总结；Web Search 另计费。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">MiniMax</div><div class="model">MiniMax-M2.7</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">¥2.10</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">¥8.40</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">读 ¥0.42；写 ¥2.625</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">/</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>低价、缓存读写清楚、轻量 Agent、文本任务。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>高频文本和批量内容；缓存写入需重复使用才划算。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">GLM</div><div class="model">GLM-5.1</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">¥6</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">¥24</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">¥1.30</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">/</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>中文能力、工具生态、Web Search、国内集成。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>中文推理和联网搜索；32K-200K 输入 ¥8、输出 ¥28。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">MiMo</div><div class="model">MiMo-V2.5-Pro</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">¥7.35</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">¥22.05</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">¥1.47</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">/</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>1M 上下文、缓存折扣、长文本、国内计价。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>超长文档；256K-1M 档位输入输出翻倍。</p></div>
+          </div>
+        </div>
+
+        <div class="model-row">
+          <div><div class="brand">Doubao</div><div class="model">doubao-seed-2.0-pro</div></div>
+          <div class="prices">
+            <div class="price-box"><div class="label">输入</div><div class="value">¥3.20</div></div>
+            <div class="price-box"><div class="label">输出</div><div class="value">¥16</div></div>
+            <div class="price-box"><div class="label">缓存</div><div class="value">¥0.64</div></div>
+            <div class="price-box"><div class="label">Batch</div><div class="value">/</div></div>
+          </div>
+          <div class="desc">
+            <div class="desc-item"><strong>核心功能</strong><p>国内调用便利、低上下文档友好、缓存价清楚、中文内容。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>日常中文任务；长上下文进入更高阶梯。</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="逐条模型说明">
+      <div class="section-head">
+        <div>
+          <h2>逐条说明</h2>
+          <p>适合做脚本、图文、选型页时逐项引用。</p>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <div class="card-head"><div><h3>Claude Opus 4.7</h3><div class="model">海外旗舰：Anthropic</div></div><span class="region">美元 + 约人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">$5 / ¥34.22</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">$25 / ¥171.09</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">读 $0.50；写入另计</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">5 折</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>复杂推理、长任务、代码理解、1M 上下文、清晰缓存规则。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>关键代码、复杂分析、需要高可靠性的长文档任务。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>Gemini 3.1 Pro Preview</h3><div class="model">海外旗舰：Google</div></div><span class="region">美元 + 约人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">$2 / ¥13.69</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">$12 / ¥82.12</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">$0.20 / ¥1.37</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">5 折</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>多模态、搜索增强、Google 生态、Pro 档输入价格相对低。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>多模态分析、资料研究、Google Workspace 和云生态用户。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>GPT-5.5</h3><div class="model">海外旗舰：OpenAI / ChatGPT</div></div><span class="region">美元 + 约人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">$5 / ¥34.22</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">$30 / ¥205.31</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">$0.50 / ¥3.42</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">5 折</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>通用能力、工具生态、Agent、开发者文档和产品集成成熟。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>复杂 Agent、通用高质量生产力、代码、研究和产品集成。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>qwen3.6-max-preview</h3><div class="model">国产旗舰：阿里云百炼 / Qwen</div></div><span class="region">国内人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">¥9</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">¥54</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">¥1.80</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">/</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>中文能力、国内云生态、人民币计价、阶梯规则清楚。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>中文内容、国内业务接入、阿里云生态和团队结算。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>deepseek-v4-pro</h3><div class="model">国产旗舰：DeepSeek</div></div><span class="region">国内人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">¥3</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">¥6</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">¥0.025</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">/</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>折扣期性价比、缓存价极低、1M 上下文、中文和代码任务。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>低成本高频调用、长上下文、代码和中文资料处理。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>kimi-k2.6</h3><div class="model">国产旗舰：Kimi</div></div><span class="region">国内人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">¥6.50</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">¥27</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">¥1.10</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">6折</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>长上下文、缓存优惠、Batch、中文内容和资料分析能力。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>长文档、资料整理、批量总结、中文写作和内容分析。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>MiniMax-M2.7</h3><div class="model">国产旗舰：MiniMax</div></div><span class="region">国内人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">¥2.10</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">¥8.40</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">读 ¥0.42；写 ¥2.625</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">/</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>低价文本任务、缓存读写清楚、轻量 Agent 和内容处理。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>高频低成本文本、批量内容处理、日常自动化。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>GLM-5.1</h3><div class="model">国产旗舰：智谱 / Z.AI</div></div><span class="region">国内人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">¥6</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">¥24</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">¥1.30</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">/</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>中文推理、工具生态、Web Search、国内开发集成。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>中文推理、联网搜索、国内应用接入、结构化输出。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>MiMo-V2.5-Pro</h3><div class="model">国产旗舰：MiMo</div></div><span class="region">国内人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">¥7.35</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">¥22.05</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">¥1.47</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">/</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>1M 上下文、缓存折扣、超长文本、国内人民币计价。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>长上下文问答、超长文档理解、国内高频文本任务。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><h3>doubao-seed-2.0-pro</h3><div class="model">国产旗舰：豆包 / 火山引擎</div></div><span class="region">国内人民币</span></div>
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="metric"><div class="label">输入</div><div class="value">¥3.20</div></div>
+              <div class="metric"><div class="label">输出</div><div class="value">¥16</div></div>
+              <div class="metric"><div class="label">缓存</div><div class="value">¥0.64</div></div>
+              <div class="metric"><div class="label">Batch</div><div class="value">/</div></div>
+            </div>
+            <div class="detail">
+              <div class="detail-block"><strong>核心功能</strong><p>国内调用便利、低上下文档友好、缓存价清楚、中文内容。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>中文内容生产、日常高频任务、国内业务接入。</p></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-label="选型索引">
+      <div class="section-head">
+        <div>
+          <h2>选型 Index</h2>
+          <p>不按品牌信仰选模型，按任务价值和成本结构选。</p>
+        </div>
+      </div>
+      <div class="index-grid">
+        <div class="index-card">
+          <h3>复杂推理 / 高价值任务</h3>
+          <p>优先看 Claude Opus、GPT-5.5、Gemini 3.1 Pro。它们贵，但上限和生态强。</p>
+        </div>
+        <div class="index-card">
+          <h3>中文内容 / 国内生态</h3>
+          <p>优先看 Qwen、Kimi、GLM、Doubao、MiMo。中文、付款、发票和平台接入更顺。</p>
+        </div>
+        <div class="index-card">
+          <h3>低预算高频调用</h3>
+          <p>优先看 DeepSeek、MiniMax、Doubao、部分 Qwen 档位。重点看输出价和缓存价。</p>
+        </div>
+        <div class="index-card">
+          <h3>长文档 / 长上下文</h3>
+          <p>看 Claude、DeepSeek、Kimi、MiMo、Qwen、Doubao。注意长上下文是否跳价。</p>
+        </div>
+        <div class="index-card">
+          <h3>批量总结 / 分类 / 翻译</h3>
+          <p>优先找 Batch 折扣：ChatGPT、Claude、Gemini、Kimi 更适合做慢速批处理。</p>
+        </div>
+        <div class="index-card">
+          <h3>中转站报价判断</h3>
+          <p>低价可以，但必须解释清楚：实际模型、token 明细、缓存、Batch、日志和隐私。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="资料来源">
+      <div class="section-head">
+        <div>
+          <h2>资料来源</h2>
+          <p>价格变化很快，发布前应按官方页面复核。</p>
+        </div>
+      </div>
+      <div class="sources">
+        <p>OpenAI API Pricing: <a href="https://openai.com/api/pricing/">https://openai.com/api/pricing/</a></p>
+        <p>Anthropic Pricing: <a href="https://platform.claude.com/docs/en/about-claude/pricing">https://platform.claude.com/docs/en/about-claude/pricing</a></p>
+        <p>Google Vertex AI Pricing: <a href="https://cloud.google.com/vertex-ai/generative-ai/pricing">https://cloud.google.com/vertex-ai/generative-ai/pricing</a></p>
+        <p>阿里云百炼模型价格: <a href="https://help.aliyun.com/zh/model-studio/model-pricing">https://help.aliyun.com/zh/model-studio/model-pricing</a></p>
+        <p>DeepSeek 中文价格页: <a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing">https://api-docs.deepseek.com/zh-cn/quick_start/pricing</a></p>
+        <p>Kimi K2.6 / Batch: <a href="https://www.kimi.com/resources/kimi-k2-6-pricing">https://www.kimi.com/resources/kimi-k2-6-pricing</a> / <a href="https://platform.kimi.com/docs/pricing/batch">https://platform.kimi.com/docs/pricing/batch</a></p>
+        <p>MiniMax Prompt Caching: <a href="https://platform.minimax.io/docs/api-reference/anthropic-api-compatible-cache">https://platform.minimax.io/docs/api-reference/anthropic-api-compatible-cache</a></p>
+        <p>Z.AI Pricing: <a href="https://docs.z.ai/guides/overview/pricing">https://docs.z.ai/guides/overview/pricing</a></p>
+        <p>MiMo Pricing: <a href="https://www.mimo-v2.com/zh/docs/pricing">https://www.mimo-v2.com/zh/docs/pricing</a></p>
+        <p>火山引擎文档: <a href="https://www.volcengine.com/docs/84458/2123431">https://www.volcengine.com/docs/84458/2123431</a></p>
+      </div>
+    </section>
+  </main>
+  <script>
+    const vendors = [
+      {
+        name: "Claude",
+        summary: "Anthropic / 美元计价，已给人民币约算",
+        region: "美元 + 约人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "Claude Opus 4.7",
+            input: "$5 / 约 ¥34.22",
+            output: "$25 / 约 ¥171.09",
+            cache: "$0.50 / 约 ¥3.42",
+            batch: "5折",
+            core: "复杂推理、代码理解、长任务、1M 上下文。",
+            scene: "高价值代码审查、长文档分析、复杂 Agent。",
+            note: "贵在输出，适合把最难的任务交给它。"
+          },
+          {
+            tier: "主力档",
+            name: "Claude Sonnet 4.6",
+            input: "$3 / 约 ¥20.53",
+            output: "$15 / 约 ¥102.65",
+            cache: "$0.30 / 约 ¥2.05",
+            batch: "5折",
+            core: "性能和成本更平衡，长任务、代码、写作都能覆盖。",
+            scene: "日常生产、代码协作、资料分析。",
+            note: "多数 Claude 场景优先从 Sonnet 试起。"
+          },
+          {
+            tier: "轻量档",
+            name: "Claude Haiku 4.5",
+            input: "$1 / 约 ¥6.84",
+            output: "$5 / 约 ¥34.22",
+            cache: "$0.10 / 约 ¥0.68",
+            batch: "5折",
+            core: "响应快、价格低，适合高频轻任务。",
+            scene: "分类、摘要、短文本改写、低风险自动化。",
+            note: "别拿轻量档硬扛复杂推理。"
+          }
+        ]
+      },
+      {
+        name: "Gemini",
+        summary: "Google / 美元计价，已给人民币约算",
+        region: "美元 + 约人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "Gemini 3.1 Pro Preview",
+            input: "$2 / 约 ¥13.69",
+            output: "$12 / 约 ¥82.12",
+            cache: "$0.20 / 约 ¥1.37",
+            batch: "5折",
+            core: "多模态、搜索增强、Google 生态、长上下文资料处理。",
+            scene: "多模态分析、资料研究、云生态集成。",
+            note: "长上下文可能进入更高价阶梯。"
+          },
+          {
+            tier: "主力档",
+            name: "Gemini 3 Flash",
+            input: "$0.50 / 约 ¥3.42",
+            output: "$3 / 约 ¥20.53",
+            cache: "$0.05 / 约 ¥0.34",
+            batch: "5折",
+            core: "速度、成本和多模态能力平衡。",
+            scene: "日常多模态、批量内容处理、轻量 Agent。",
+            note: "适合把 Pro 留给更难的问题。"
+          },
+          {
+            tier: "轻量档",
+            name: "Gemini 3.1 Flash-Lite",
+            input: "$0.25 / 约 ¥1.71",
+            output: "$1.50 / 约 ¥10.27",
+            cache: "$0.025 / 约 ¥0.17",
+            batch: "5折",
+            core: "低价、高频、快速响应。",
+            scene: "标签分类、简单摘要、低成本客服辅助。",
+            note: "适合大批量但容错率较高的任务。"
+          }
+        ]
+      },
+      {
+        name: "ChatGPT",
+        summary: "OpenAI / 美元计价，已给人民币约算",
+        region: "美元 + 约人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "GPT-5.5",
+            input: "$5 / 约 ¥34.22",
+            output: "$30 / 约 ¥205.31",
+            cache: "$0.50 / 约 ¥3.42",
+            batch: "5折",
+            core: "通用能力、工具生态、Agent、开发者文档和产品集成成熟。",
+            scene: "复杂 Agent、产品集成、代码、研究和高价值任务。",
+            note: "输出价高，任务拆分和缓存更重要。"
+          },
+          {
+            tier: "主力档",
+            name: "GPT-5.4",
+            input: "$2.50 / 约 ¥17.11",
+            output: "$15 / 约 ¥102.65",
+            cache: "$0.25 / 约 ¥1.71",
+            batch: "5折",
+            core: "通用高质量能力，价格低于旗舰档。",
+            scene: "内容生产、代码协作、复杂但不极限的任务。",
+            note: "多数付费调用可以先从主力档试。"
+          },
+          {
+            tier: "轻量档",
+            name: "GPT-5.4 mini",
+            input: "$0.75 / 约 ¥5.13",
+            output: "$4.50 / 约 ¥30.80",
+            cache: "$0.075 / 约 ¥0.51",
+            batch: "5折",
+            core: "低成本、速度快、工具生态完整。",
+            scene: "批量改写、分类、简单问答、应用内助手。",
+            note: "适合做基础任务的默认模型。"
+          }
+        ]
+      },
+      {
+        name: "Qwen",
+        summary: "阿里云百炼 / 国内人民币",
+        region: "国内人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "qwen3.6-max-preview",
+            input: "¥9",
+            output: "¥54",
+            cache: "¥1.80",
+            batch: "/",
+            core: "中文强、阿里云生态、国内业务接入方便。",
+            scene: "中文内容、企业知识库、国内云上应用。",
+            note: "128K-256K 输入 ¥15，输出 ¥90。"
+          },
+          {
+            tier: "主力档",
+            name: "qwen3.6-plus",
+            input: "¥2",
+            output: "¥12",
+            cache: "¥0.40",
+            batch: "5折",
+            core: "价格和能力更均衡，支持更长上下文档位。",
+            scene: "日常中文任务、资料总结、批量处理。",
+            note: "超长上下文会进入更高价阶梯。"
+          },
+          {
+            tier: "轻量档",
+            name: "qwen3.6-flash",
+            input: "¥1.20",
+            output: "¥7.20",
+            cache: "¥0.24",
+            batch: "5折",
+            core: "低价、响应快、适合高频中文任务。",
+            scene: "分类、摘要、批量改写、低成本应用助手。",
+            note: "中文任务性价比很强。"
+          }
+        ]
+      },
+      {
+        name: "DeepSeek",
+        summary: "DeepSeek 官方 + 国内渠道对照",
+        region: "国内人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "deepseek-v4-pro",
+            input: "¥3",
+            output: "¥6",
+            cache: "¥0.025",
+            batch: "/",
+            core: "折扣期性价比、缓存价低、1M 上下文、中文和代码任务。",
+            scene: "低成本高频调用、长上下文、代码和中文资料处理。",
+            note: "折扣期到 2026-05-31，发布前复核。"
+          },
+          {
+            tier: "主力档",
+            name: "deepseek-v4-flash",
+            input: "¥1",
+            output: "¥2",
+            cache: "¥0.02",
+            batch: "/",
+            core: "低价、快速、适合常规对话和代码辅助。",
+            scene: "日常问答、批量文本、低预算应用。",
+            note: "官方 chat / reasoner 旧名逐步迁移。"
+          },
+          {
+            tier: "对照档",
+            name: "deepseek-v3.2",
+            input: "¥2",
+            output: "¥3",
+            cache: "¥0.40",
+            batch: "/",
+            core: "存量渠道仍常见，适合作为价格对照。",
+            scene: "已有项目迁移前的成本比较。",
+            note: "新项目优先看 V4 系列。"
+          }
+        ]
+      },
+      {
+        name: "Kimi",
+        summary: "月之暗面 / 国内人民币",
+        region: "国内人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "kimi-k2.6",
+            input: "¥6.50",
+            output: "¥27",
+            cache: "¥1.10",
+            batch: "6折",
+            core: "长上下文、缓存优惠、Batch、中文内容和资料分析。",
+            scene: "长文档、资料整理、批量总结、中文写作。",
+            note: "Web Search 另计费。"
+          },
+          {
+            tier: "主力档",
+            name: "kimi-k2.5",
+            input: "¥4",
+            output: "¥21",
+            cache: "¥0.80",
+            batch: "6折",
+            core: "中文长文档和内容处理能力稳定。",
+            scene: "资料阅读、脚本整理、长文本问答。",
+            note: "比 K2.6 更适合常规成本控制。"
+          },
+          {
+            tier: "推理档",
+            name: "kimi-k2-thinking",
+            input: "¥4",
+            output: "¥16",
+            cache: "/",
+            batch: "/",
+            core: "推理和思考型任务，价格相对清楚。",
+            scene: "逻辑分析、复杂问题拆解、内容策划。",
+            note: "Batch 和缓存按官方发布前再复核。"
+          }
+        ]
+      },
+      {
+        name: "MiniMax",
+        summary: "MiniMax / 国内人民币",
+        region: "国内人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "MiniMax-M2.7",
+            input: "¥2.10",
+            output: "¥8.40",
+            cache: "读 ¥0.42；写 ¥2.625",
+            batch: "/",
+            core: "低价文本任务、缓存读写清楚、轻量 Agent 和内容处理。",
+            scene: "高频低成本文本、批量内容处理、日常自动化。",
+            note: "缓存写入贵于读取，复用越多越划算。"
+          },
+          {
+            tier: "高速档",
+            name: "MiniMax-M2.7-Highspeed",
+            input: "¥4.20",
+            output: "¥16.80",
+            cache: "读 ¥0.84；写 ¥5.25",
+            batch: "/",
+            core: "同系高速版本，偏响应速度。",
+            scene: "实时交互、轻量 Agent、对延迟敏感的任务。",
+            note: "适合需要快但不想上海外旗舰的场景。"
+          },
+          {
+            tier: "对照档",
+            name: "MiniMax-M2.5",
+            input: "¥2.10",
+            output: "¥8.40",
+            cache: "读 ¥0.42；写 ¥2.625",
+            batch: "/",
+            core: "上一代稳定档，价格仍有参考价值。",
+            scene: "存量项目、日常文本、批量内容。",
+            note: "新项目优先对比 M2.7。"
+          }
+        ]
+      },
+      {
+        name: "GLM",
+        summary: "智谱 / Z.AI / 国内人民币",
+        region: "国内人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "GLM-5.1",
+            input: "¥6",
+            output: "¥24",
+            cache: "¥1.20",
+            batch: "/",
+            core: "中文推理、工具生态、Web Search、国内开发集成。",
+            scene: "中文推理、联网搜索、国内应用接入、结构化输出。",
+            note: "32K-200K 输入 ¥8，输出 ¥28。"
+          },
+          {
+            tier: "主力档",
+            name: "GLM-5",
+            input: "¥4",
+            output: "¥18",
+            cache: "/",
+            batch: "/",
+            core: "通用中文能力和工具生态。",
+            scene: "企业内部助手、中文内容、结构化任务。",
+            note: "需要缓存时优先看 GLM-5.1。"
+          },
+          {
+            tier: "轻量档",
+            name: "GLM-4.7",
+            input: "¥3",
+            output: "¥14",
+            cache: "¥0.60",
+            batch: "/",
+            core: "性价比中文任务和存量项目支持。",
+            scene: "常规问答、内容整理、低成本接入。",
+            note: "适合对成本敏感的中文场景。"
+          }
+        ]
+      },
+      {
+        name: "MiMo",
+        summary: "小米 MiMo / 国内人民币",
+        region: "国内人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "MiMo-V2.5-Pro",
+            input: "¥7.35",
+            output: "¥22.05",
+            cache: "¥1.47",
+            batch: "/",
+            core: "1M 上下文、缓存折扣、超长文本、国内人民币计价。",
+            scene: "长上下文问答、超长文档理解、国内高频文本任务。",
+            note: "256K-1M 档输入输出翻倍。"
+          },
+          {
+            tier: "主力档",
+            name: "MiMo-V2.5",
+            input: "¥2.94",
+            output: "¥14.70",
+            cache: "¥0.59",
+            batch: "/",
+            core: "成本更低，仍保留长上下文和缓存折扣。",
+            scene: "常规长文档、中文问答、内容分析。",
+            note: "适合先跑成本测算。"
+          },
+          {
+            tier: "多模态档",
+            name: "MiMo-V2-Omni",
+            input: "¥2.94",
+            output: "¥14.70",
+            cache: "¥0.59",
+            batch: "/",
+            core: "多模态能力和文本任务兼顾。",
+            scene: "图文理解、多模态问答、内容审核。",
+            note: "发布前按官方页复核媒体计费。"
+          }
+        ]
+      },
+      {
+        name: "Doubao",
+        summary: "火山引擎 / 国内人民币",
+        region: "国内人民币",
+        models: [
+          {
+            tier: "旗舰档",
+            name: "doubao-seed-2.0-pro",
+            input: "¥3.20",
+            output: "¥16",
+            cache: "¥0.64",
+            batch: "/",
+            core: "国内调用便利、低上下文档友好、缓存价清楚、中文内容。",
+            scene: "中文内容生产、日常高频任务、国内业务接入。",
+            note: "长上下文进入更高价阶梯。"
+          },
+          {
+            tier: "主力档",
+            name: "doubao-seed-2.0-lite",
+            input: "¥0.60",
+            output: "¥3.60",
+            cache: "¥0.12",
+            batch: "/",
+            core: "更低成本的中文通用任务。",
+            scene: "内容改写、摘要、应用内助手、批量任务。",
+            note: "适合把 Pro 留给更难的问题。"
+          },
+          {
+            tier: "轻量档",
+            name: "doubao-seed-2.0-mini",
+            input: "¥0.20",
+            output: "¥2",
+            cache: "¥0.04",
+            batch: "/",
+            core: "极低价、适合高频基础任务。",
+            scene: "分类、标签、短文本处理、低成本问答。",
+            note: "复杂任务别只看单价。"
+          }
+        ]
+      }
+    ];
+
+    const escapeHtml = (value) =>
+      String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+
+    const priceBox = (label, value) => `
+      <div class="price-box">
+        <div class="label">${escapeHtml(label)}</div>
+        <div class="value">${escapeHtml(value)}</div>
+      </div>`;
+
+    const modelRow = (vendor, model) => `
+      <div class="model-row">
+        <div>
+          <div class="brand">${escapeHtml(vendor.name)}</div>
+          <div class="model">${escapeHtml(model.name)}</div>
+          <span class="tier">${escapeHtml(model.tier)}</span>
+        </div>
+        <div class="prices">
+          ${priceBox("输入", model.input)}
+          ${priceBox("输出", model.output)}
+          ${priceBox("缓存", model.cache)}
+          ${priceBox("Batch", model.batch)}
+        </div>
+        <div class="desc">
+          <div class="desc-item"><strong>核心功能</strong><p>${escapeHtml(model.core)}</p></div>
+          <div class="desc-item"><strong>适用场景 / 注意点</strong><p>${escapeHtml(model.scene)} ${escapeHtml(model.note)}</p></div>
+        </div>
+      </div>`;
+
+    const vendorGroup = (vendor) => `
+      <div class="vendor-group">
+        <div class="vendor-title">
+          <strong>${escapeHtml(vendor.name)}</strong>
+          <span>${escapeHtml(vendor.summary)}</span>
+        </div>
+        ${vendor.models.map((model) => modelRow(vendor, model)).join("")}
+      </div>`;
+
+    const metric = (label, value) => `
+      <div class="metric">
+        <div class="label">${escapeHtml(label)}</div>
+        <div class="value">${escapeHtml(value)}</div>
+      </div>`;
+
+    const card = (vendor, model) => `
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <h3>${escapeHtml(model.name)}</h3>
+            <div class="model">${escapeHtml(model.tier)}：${escapeHtml(vendor.name)}</div>
+          </div>
+          <span class="region">${escapeHtml(vendor.region)}</span>
+        </div>
+        <div class="card-body">
+          <div class="mini-grid">
+            ${metric("输入", model.input)}
+            ${metric("输出", model.output)}
+            ${metric("缓存", model.cache)}
+            ${metric("Batch", model.batch)}
+          </div>
+          <div class="detail">
+            <div class="detail-block"><strong>核心功能</strong><p>${escapeHtml(model.core)}</p></div>
+            <div class="detail-block"><strong>适用场景</strong><p>${escapeHtml(model.scene)} ${escapeHtml(model.note)}</p></div>
+          </div>
+        </div>
+      </article>`;
+
+    const modelList = document.querySelector(".model-list");
+    if (modelList) {
+      modelList.innerHTML = vendors.map(vendorGroup).join("");
+    }
+
+    const cards = document.querySelector(".cards");
+    if (cards) {
+      cards.innerHTML = vendors.flatMap((vendor) => vendor.models.map((model) => card(vendor, model))).join("");
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
