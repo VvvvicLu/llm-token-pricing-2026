@@ -569,7 +569,7 @@
       </div>
       <div class="model-list">
         <div class="model-row">
-          <div><div class="brand">Claude</div><div class="model">Claude Fable 5（最新发布）</div></div>
+          <div><div class="brand">Claude</div><div class="model">Claude Mythos 5（最新发布）</div></div>
           <div class="prices">
             <div class="price-box"><div class="label">输入</div><div class="value">$5 / ¥34.08</div></div>
             <div class="price-box"><div class="label">输出</div><div class="value">$25 / ¥170.42</div></div>
@@ -577,8 +577,8 @@
             <div class="price-box"><div class="label">Batch</div><div class="value">5 折</div></div>
           </div>
           <div class="desc">
-            <div class="desc-item"><strong>核心功能</strong><p>复杂推理、代码理解、清晰缓存规则、1M 上下文。</p></div>
-            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>关键代码、复杂分析；输出价高，缓存写入也要计费。</p></div>
+            <div class="desc-item"><strong>核心功能</strong><p>复杂推理、代码理解、长任务、1M 上下文。</p></div>
+            <div class="desc-item"><strong>适用场景 / 注意点</strong><p>关键代码、复杂分析；当前为限量开放档，适合高价值任务。</p></div>
           </div>
         </div>
 
@@ -719,7 +719,7 @@
       </div>
       <div class="cards">
         <article class="card">
-          <div class="card-head"><div><h3>Claude Fable 5（最新发布）</h3><div class="model">海外旗舰：Anthropic</div></div><span class="region">美元 + 约人民币</span></div>
+          <div class="card-head"><div><h3>Claude Mythos 5（最新发布）</h3><div class="model">海外旗舰：Anthropic</div></div><span class="region">美元 + 约人民币</span></div>
           <div class="card-body">
             <div class="mini-grid">
               <div class="metric"><div class="label">输入</div><div class="value">$5 / ¥34.08</div></div>
@@ -728,8 +728,8 @@
               <div class="metric"><div class="label">Batch</div><div class="value">5 折</div></div>
             </div>
             <div class="detail">
-              <div class="detail-block"><strong>核心功能</strong><p>复杂推理、长任务、代码理解、1M 上下文、清晰缓存规则。</p></div>
-              <div class="detail-block"><strong>适用场景</strong><p>关键代码、复杂分析、需要高可靠性的长文档任务。</p></div>
+              <div class="detail-block"><strong>核心功能</strong><p>复杂推理、长任务、代码理解、1M 上下文。</p></div>
+              <div class="detail-block"><strong>适用场景</strong><p>关键代码、复杂分析、需要高可靠性的长文档任务；当前为限量开放档。</p></div>
             </div>
           </div>
         </article>
@@ -922,7 +922,7 @@
       <div class="index-grid">
         <div class="index-card">
           <h3>复杂推理 / 高价值任务</h3>
-          <p>优先看 Claude Fable 5、GPT-5.5、Gemini 3.1 Pro。它们贵，但上限和生态强。</p>
+          <p>优先看 Claude Mythos 5、GPT-5.5、Gemini 3.1 Pro。它们贵，但上限和生态强。</p>
         </div>
         <div class="index-card">
           <h3>中文内容 / 国内生态</h3>
@@ -977,6 +977,17 @@
         models: [
           {
             tier: "旗舰档",
+            name: "Claude Mythos 5（最新发布）",
+            input: "$5 / 约 ¥34.05",
+            output: "$25 / 约 ¥170.27",
+            cache: "读 $0.50 / 约 ¥3.41；写入 $6.25/$10（约 ¥42.57/¥68.11）",
+            batch: "5折",
+            core: "Anthropic 最新限量旗舰，复杂推理、代码理解、长任务、1M 上下文。",
+            scene: "高价值代码审查、复杂 Agent、超长资料分析。",
+            note: "当前为限量开放档；Batch 可降到输入 $2.50 / 输出 $12.50。"
+          },
+          {
+            tier: "旗舰主力档",
             name: "Claude Fable 5（最新发布）",
             input: "$10 / 约 ¥68.11",
             output: "$50 / 约 ¥340.55",
@@ -1075,7 +1086,7 @@
             batch: "5折",
             core: "通用能力、工具生态、Agent、开发者文档和产品集成成熟。",
             scene: "复杂 Agent、产品集成、代码、研究和高价值任务。",
-            note: "标准价适用于输入低于 272K 档；更长输入会进入更高价阶梯。"
+            note: "标准价适用于输入低于 270K 档；更长输入会进入更高价阶梯。"
           },
           {
             tier: "主力档",
