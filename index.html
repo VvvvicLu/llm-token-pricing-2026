@@ -529,7 +529,7 @@
       <div>
         <h1>大模型 Token 价格与选型对比</h1>
         <div class="meta">
-          <span class="pill" id="review-date">核对日期：2026-07-13</span>
+          <span class="pill" id="review-date">核对日期：2026-08-03</span>
           <span class="pill">单位：每 100 万 token</span>
           <span class="pill">汇率：1 USD ≈ ¥6.7972</span>
         </div>
@@ -955,13 +955,13 @@
         </div>
       </div>
       <div class="sources">
-        <p>人民币汇率中间价（官方，2026-07-13）: <a href="https://www.chinamoney.com.cn/chinese/bkccpr/">https://www.chinamoney.com.cn/chinese/bkccpr/</a></p>
+        <p>人民币汇率数据（官方，2026-08-03）: <a href="https://www.chinamoney.com.cn/chinese/sddshl/">https://www.chinamoney.com.cn/chinese/sddshl/</a></p>
         <p>OpenAI API Pricing: <a href="https://openai.com/api/pricing/">https://openai.com/api/pricing/</a></p>
         <p>Anthropic Claude Pricing: <a href="https://docs.anthropic.com/en/docs/about-claude/pricing">https://docs.anthropic.com/en/docs/about-claude/pricing</a></p>
         <p>Gemini API Pricing: <a href="https://ai.google.dev/gemini-api/docs/pricing">https://ai.google.dev/gemini-api/docs/pricing</a></p>
         <p>阿里云百炼模型价格 / 上下文缓存: <a href="https://help.aliyun.com/zh/model-studio/model-pricing">https://help.aliyun.com/zh/model-studio/model-pricing</a> / <a href="https://help.aliyun.com/zh/model-studio/context-cache">https://help.aliyun.com/zh/model-studio/context-cache</a></p>
         <p>DeepSeek 价格页: <a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing">https://api-docs.deepseek.com/zh-cn/quick_start/pricing</a></p>
-        <p>Kimi 官方首页 / 模型列表 / K2.7 Code 定价 / Batch: <a href="https://platform.kimi.com/">https://platform.kimi.com/</a> / <a href="https://platform.kimi.com/docs/models">https://platform.kimi.com/docs/models</a> / <a href="https://platform.kimi.com/docs/pricing/chat-k27-code">https://platform.kimi.com/docs/pricing/chat-k27-code</a> / <a href="https://platform.kimi.com/docs/pricing/batch">https://platform.kimi.com/docs/pricing/batch</a></p>
+        <p>Kimi 官方首页 / 模型列表 / K3 定价 / Batch: <a href="https://platform.kimi.com/">https://platform.kimi.com/</a> / <a href="https://platform.kimi.com/docs/models">https://platform.kimi.com/docs/models</a> / <a href="https://platform.kimi.com/docs/pricing/chat-k3">https://platform.kimi.com/docs/pricing/chat-k3</a> / <a href="https://platform.kimi.com/docs/pricing/batch">https://platform.kimi.com/docs/pricing/batch</a></p>
         <p>MiniMax Pay-as-you-go Pricing: <a href="https://platform.minimax.io/docs/guides/pricing/pricing-paygo">https://platform.minimax.io/docs/guides/pricing/pricing-paygo</a></p>
         <p>智谱 GLM 定价 / 新品发布 / 模型页: <a href="https://open.bigmodel.cn/pricing">https://open.bigmodel.cn/pricing</a> / <a href="https://docs.bigmodel.cn/cn/update/new-releases">https://docs.bigmodel.cn/cn/update/new-releases</a> / <a href="https://docs.bigmodel.cn/cn/guide/models/text/glm-5.1">https://docs.bigmodel.cn/cn/guide/models/text/glm-5.1</a></p>
         <p>小米 MiMo 定价 / 下线公告 / 模型说明: <a href="https://platform.xiaomimimo.com/docs/price/pay-as-you-go">https://platform.xiaomimimo.com/docs/price/pay-as-you-go</a> / <a href="https://platform.xiaomimimo.com/docs/updates/deprecate">https://platform.xiaomimimo.com/docs/updates/deprecate</a> / <a href="https://platform.xiaomimimo.com/docs/quick-start/summary/model">https://platform.xiaomimimo.com/docs/quick-start/summary/model</a></p>
@@ -972,63 +972,52 @@
     const vendors = [
       {
         name: "Claude",
-        summary: "Anthropic / 美元计价，已按 2026-07-13 汇率约算人民币",
+        summary: "Anthropic / 美元计价，已按 2026-08-03 官方汇率约算人民币",
         region: "美元 + 约人民币",
         models: [
           {
             tier: "旗舰档",
-            name: "Claude Mythos 5（最新发布）",
-            input: "$10 / 约 ¥67.97",
-            output: "$50 / 约 ¥339.86",
-            cache: "读 $1 / 约 ¥6.80；写入 $12.50/$20（约 ¥84.97/¥135.94）",
+            name: "Claude Opus 5（最新发布）",
+            input: "$10 / 约 ¥67.90",
+            output: "$50 / 约 ¥339.49",
+            cache: "读 $1 / 约 ¥6.79；写入 $12.50/$20（约 ¥84.87/¥135.80）",
             batch: "5折",
-            core: "Anthropic 最新限量旗舰，复杂推理、代码理解、长任务、1M 上下文。",
+            core: "Anthropic 当前最高档旗舰，复杂推理、代码理解、长任务、1M 上下文。",
             scene: "高价值代码审查、复杂 Agent、超长资料分析。",
-            note: "当前为限量开放档；Batch 可降到输入 $5 / 输出 $25。"
+            note: "官方价表当前已列出；Batch 可降到输入 $5 / 输出 $25。"
           },
           {
-            tier: "旗舰主力档",
-            name: "Claude Fable 5（最新发布）",
-            input: "$10 / 约 ¥67.97",
-            output: "$50 / 约 ¥339.86",
-            cache: "读 $1 / 约 ¥6.80；写入 $12.50/$20（约 ¥84.97/¥135.94）",
-            batch: "5折",
-            core: "Anthropic 最新旗舰，复杂推理、代码理解、长任务、1M 上下文。",
-            scene: "高价值代码审查、复杂 Agent、超长资料分析。",
-            note: "Batch 可降到输入 $5 / 输出 $25；此处按标准档。"
-          },
-          {
-            tier: "旗舰对照",
+            tier: "旗舰对照档",
             name: "Claude Opus 4.8",
-            input: "$5 / 约 ¥33.99",
-            output: "$25 / 约 ¥169.93",
-            cache: "读 $0.50 / 约 ¥3.40；写入 $6.25/$10（约 ¥42.48/¥67.97）",
+            input: "$5 / 约 ¥33.95",
+            output: "$25 / 约 ¥169.75",
+            cache: "读 $0.50 / 约 ¥3.39；写入 $6.25/$10（约 ¥42.44/¥67.90）",
             batch: "5折",
-            core: "复杂推理、代码理解、长任务、1M 上下文。",
+            core: "上一代高端档，复杂推理、代码理解、长任务、1M 上下文。",
             scene: "对照评测、回归测试、稳定性对比。",
-            note: "Fable 5 上线后，Opus 4.8 更适合作历史/价格对照。"
+            note: "Opus 5 上线后，更适合作为历史/价格对照。"
           },
           {
             tier: "主力档",
-            name: "Claude Sonnet 5（最新发布）",
-            input: "$2 / 约 ¥13.59",
-            output: "$10 / 约 ¥67.97",
-            cache: "读 $0.20 / 约 ¥1.36；写入 $2.50/$4（约 ¥16.99/¥27.19）",
+            name: "Claude Sonnet 5",
+            input: "$3 / 约 ¥20.37",
+            output: "$15 / 约 ¥101.85",
+            cache: "读 $0.30 / 约 ¥2.04；写入 $3.75/$6（约 ¥25.46/¥40.74）",
             batch: "5折",
-            core: "当前 Claude 主力档，性能和成本更平衡，长任务、代码、写作都能覆盖。",
+            core: "Anthropic 当前默认主力档，性能和成本更平衡，长任务、代码、写作都能覆盖。",
             scene: "日常生产、代码协作、资料分析。",
-            note: "官网当前为限时引导价；多数 Claude 场景优先从 Sonnet 试起。"
+            note: "搜索结果与官方价表均显示 Sonnet 5 为当前最新主力。"
           },
           {
             tier: "轻量档",
-            name: "Claude Haiku 5（最新发布）",
-            input: "$1 / 约 ¥6.80",
-            output: "$5 / 约 ¥33.99",
-            cache: "读 $0.10 / 约 ¥0.68；写入 $1.25/$2（约 ¥8.50/¥13.59）",
+            name: "Claude Haiku 4.5",
+            input: "$1 / 约 ¥6.79",
+            output: "$5 / 约 ¥33.95",
+            cache: "读 $0.10 / 约 ¥0.68；写入 $1.25/$2（约 ¥8.49/¥13.58）",
             batch: "5折",
-            core: "响应快、价格低，适合高频轻任务。",
+            core: "响应快、价格低，适合高频轻任务和大批量基础流程。",
             scene: "分类、摘要、短文本改写、低风险自动化。",
-            note: "别拿轻量档硬扛复杂推理。"
+            note: "轻量档更适合高频自动化，不建议硬扛复杂推理。"
           }
         ]
       },
@@ -1125,19 +1114,30 @@
       },
       {
         name: "Qwen",
-        summary: "阿里云百炼 / 国内人民币（2026-06-29 复核）",
+        summary: "阿里云百炼 / 国内人民币（2026-08-03 复核）",
         region: "国内人民币",
         models: [
           {
             tier: "旗舰档",
-            name: "qwen3.7-max（最新发布）",
+            name: "qwen3.8-max（最新发布）",
             input: "¥12（0-1M）",
             output: "¥36（0-1M）",
             cache: "复用（输入×10%）；创建（输入×125%）",
             batch: "5折",
-            core: "中文通用能力强、百炼生态、上下文缓存与 Batch 折扣明确。",
+            core: "千问最新旗舰，中文通用、推理、企业集成和 1M 上下文都处于当前第一梯队。",
             scene: "中文内容、企业知识库、国内云上应用。",
             note: "1M 上下文；Batch 与缓存折扣不叠加。"
+          },
+          {
+            tier: "旗舰主力档",
+            name: "qwen3.7-max",
+            input: "¥12（0-1M）",
+            output: "¥36（0-1M）",
+            cache: "复用（输入×10%）；创建（输入×125%）",
+            batch: "5折",
+            core: "当前稳定主力旗舰，中文内容、工具调用和长文档任务表现均衡。",
+            scene: "中文内容、企业知识库、国内云上应用。",
+            note: "官方价页当前仍列出；控制台另有活动价时以控制台为准。"
           },
           {
             tier: "主力档",
@@ -1165,7 +1165,7 @@
       },
       {
         name: "DeepSeek",
-        summary: "DeepSeek 官方 / 2026-06-29 复核",
+        summary: "DeepSeek 官方 / 2026-08-03 复核",
         region: "国内人民币",
         models: [
           {
@@ -1175,9 +1175,9 @@
             output: "¥6",
             cache: "复用输入 ¥0.025",
             batch: "/",
-            core: "性价比、缓存价低、1M 上下文、中文和代码任务。",
-            scene: "低成本高频调用、长上下文、代码和中文资料处理。",
-            note: "已按原定价 1/4 固定。"
+            core: "DeepSeek 当前高端档，1M 上下文、384K 输出、代码与中文任务都更稳。",
+            scene: "长上下文代码、复杂推理、资料分析、工程任务。",
+            note: "官方价格页当前已切到 V4 系列；峰时定价将按后续正式通知执行。"
           },
           {
             tier: "主力档",
@@ -1186,31 +1186,42 @@
             output: "¥2",
             cache: "复用输入 ¥0.02",
             batch: "/",
-            core: "低价、快速、适合常规对话和代码辅助。",
+            core: "DeepSeek 当前低价主力档，1M 上下文、384K 输出，适合大批量默认调用。",
             scene: "日常问答、批量文本、低预算应用。",
-            note: "同价结构更适合作为默认大批量调用档位。"
+            note: "Responses API 当前先支持 Flash；更适合作为默认大批量调用档位。"
           }
         ]
       },
       {
         name: "Kimi",
-        summary: "月之暗面 / 国内人民币（2026-06-29 复核）",
+        summary: "月之暗面 / 国内人民币（2026-08-03 复核）",
         region: "国内人民币",
         models: [
           {
             tier: "旗舰档",
-            name: "kimi-k2.7-code（最新发布）",
+            name: "kimi-k3（最新发布）",
+            input: "¥20.00",
+            output: "¥100.00",
+            cache: "复用 ¥2.00",
+            batch: "/",
+            core: "Kimi 当前旗舰，1M 上下文，长程编程与端到端知识工作能力最强。",
+            scene: "复杂代码代理、超长资料分析、端到端知识工作流。",
+            note: "支持推理强度调节与更完整的工具调用能力；当前不在 Batch 官方清单内。"
+          },
+          {
+            tier: "编程主力档",
+            name: "kimi-k2.7-code",
             input: "¥6.50",
             output: "¥27.00",
             cache: "复用 ¥1.30",
             batch: "6折（支持 K2.7 Code / K2.6 / K2.5）",
-            core: "Kimi 当前最强 Coding 模型，256K 上下文，长程编程和复杂工程任务更稳。",
+            core: "Kimi 当前主力编程档，262K 上下文，长程编程和复杂工程任务更稳。",
             scene: "代码生成、前端页面、工程改造、长上下文编程代理。",
             note: "官方单列定价页已上线；Batch 官方支持清单已覆盖 K2.7 Code。"
           },
           {
-            tier: "旗舰高速档",
-            name: "kimi-k2.7-code-highspeed（最新发布）",
+            tier: "编程高速档",
+            name: "kimi-k2.7-code-highspeed",
             input: "¥13.00",
             output: "¥54.00",
             cache: "复用 ¥2.60",
